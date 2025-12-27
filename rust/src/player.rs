@@ -1,4 +1,4 @@
-#![allow(unused)]
+// #![allow(unused)]
 use godot::classes::{ISprite2D, Sprite2D};
 use godot::prelude::*;
 
@@ -14,7 +14,7 @@ struct Player {
 #[godot_api]
 impl ISprite2D for Player {
     fn init(base: Base<Sprite2D>) -> Self {
-        godot_print!("hello world");
+        godot_print!("hello world from rust");
 
         return Player {
             speed: 400.0,
@@ -27,5 +27,11 @@ impl ISprite2D for Player {
         let radians = (self.angular_speed * delta) as f32;
 
         self.base_mut().rotate(radians);
+
+        let rotation = self.base().get_rotation();
+
+        let velocity = Vector2::UP.rotated(rotation) * self.speed as f32;
+
+        self.base_mut().translate(velocity * delta as f32);
     }
 }
