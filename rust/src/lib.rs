@@ -1,39 +1,8 @@
-#![allow(unused)]
-fn main() {
-    use godot::classes::{ISprite2D, Sprite2D};
-    use godot::prelude::*;
+mod player;
 
-    struct VoxelExtension;
+use godot::prelude::*;
 
-    // godot_print!("hello world from rust!");
-    #[derive(GodotClass)]
-    #[class(base=Sprite2D)]
-    struct Player {
-        speed: f64,
-        angular_speed: f64,
+struct VoxelExtension;
 
-        base: Base<Sprite2D>,
-    }
-
-    #[godot_api]
-    impl ISprite2D for Player {
-        fn init(base: Base<Sprite2D>) -> Self {
-            godot_print!("hello world");
-
-            return Player {
-                speed: 400.0,
-                angular_speed: std::f64::consts::PI,
-                base,
-            };
-        }
-
-        fn physics_process(&mut self, delta: f64) {
-            let radians = (self.angular_speed * delta) as f32;
-
-            self.base_mut().rotate(radians);
-        }
-    }
-
-    #[gdextension]
-    unsafe impl ExtensionLibrary for VoxelExtension {}
-}
+#[gdextension]
+unsafe impl ExtensionLibrary for VoxelExtension {}
