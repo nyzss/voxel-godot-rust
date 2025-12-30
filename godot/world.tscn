@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://bk5onkrn7xg1r"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gv5m4"]
+albedo_color = Color(0.8522317, 0.30534402, 0.7130521, 1)
+
+[node name="World" type="World"]
+cut_off = 0.29200000000000004
+metadata/_edit_group_ = true
+
+[node name="DefaultCube" type="CSGBox3D" parent="."]
+material = SubResource("StandardMaterial3D_gv5m4")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-0.6238796, 0.3240912, -0.71115327, 0, 0.9099612, 0.4146932, 0.78152037, 0.25871864, -0.5677063, -5.83, 17.16, -6.24)
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.6840635, -0.6034757, -0.40972438, 0.070844874, 0.5040875, -0.860742, 0.7259738, -0.6178291, -0.30207476, 0, 0, 0)
