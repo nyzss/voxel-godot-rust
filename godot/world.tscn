@@ -11,6 +11,7 @@ world_size = Vector3(32, 32, 32)
 metadata/_edit_group_ = true
 
 [node name="DefaultCube" type="CSGBox3D" parent="."]
+use_collision = true
 material = SubResource("StandardMaterial3D_gv5m4")
 
 [node name="Camera3D" type="Camera3D" parent="."]
