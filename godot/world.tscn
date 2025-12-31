@@ -1,9 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://bk5onkrn7xg1r"]
+[gd_scene load_steps=6 format=3 uid="uid://bk5onkrn7xg1r"]
 
 [ext_resource type="PackedScene" uid="uid://oj0oouh4mwtt" path="res://player.tscn" id="1_f3sb7"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gv5m4"]
 albedo_color = Color(0.8522317, 0.30534402, 0.7130521, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f3sb7"]
+albedo_color = Color(0.85119224, 0.38232893, 0.25827846, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fj7yv"]
+material = SubResource("StandardMaterial3D_f3sb7")
+
+[sub_resource type="MultiMesh" id="MultiMesh_tlwt5"]
+transform_format = 1
+mesh = SubResource("BoxMesh_fj7yv")
 
 [node name="World" type="World"]
 cut_off = 0.10499999999999998
@@ -28,3 +38,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 40, 16)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004869461, 4.7683716e-07, 0.0099077225)
 use_collision = true
 size = Vector3(100, 1, 100)
+
+[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="."]
+multimesh = SubResource("MultiMesh_tlwt5")

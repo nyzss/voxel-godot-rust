@@ -1,6 +1,7 @@
 use godot::{
     classes::{
-        CsgBox3D, FastNoiseLite, Input, InputEvent, InputEventMouseButton, Performance, input,
+        CsgBox3D, FastNoiseLite, Input, InputEvent, InputEventMouseButton, MultiMeshInstance3D,
+        Performance, input,
     },
     global::MouseButton,
     prelude::*,
@@ -16,15 +17,16 @@ struct World {
     #[export]
     world_size: Vector3,
     default_cube: OnReady<Gd<CsgBox3D>>,
+    multi_mesh_instance: OnReady<Gd<MultiMeshInstance3D>>,
 
-    total_cubes: u32,
+    data: Vec<Vector3>,
 }
 
 #[godot_api]
 impl World {
     #[func]
     fn get_total_cubes(&self) -> u32 {
-        self.total_cubes
+        self.data.len() as u32
     }
 }
 
@@ -37,8 +39,9 @@ impl INode3D for World {
             cut_off: 0.5,
             world_size: Vector3::new(16., 16., 16.),
             default_cube: OnReady::from_node("DefaultCube"),
+            multi_mesh_instance: OnReady::from_node("MultiMeshInstance3D"),
 
-            total_cubes: 0,
+            data: Vec::new(),
         }
     }
 
@@ -60,21 +63,17 @@ impl INode3D for World {
                     let rand = rng.get_noise_3d(x, y, z);
 
                     if rand > self.cut_off {
-                        let mut dup_cube = self
-                            .default_cube
-                            .duplicate()
-                            .unwrap()
-                            .try_cast::<CsgBox3D>()
-                            .unwrap();
-
-                        let position = Vector3::new(x, y, z);
-                        dup_cube.set_position(position);
-
-                        self.base_mut().add_child(&dup_cube);
-                        self.total_cubes += 1;
+                        self.data.push(Vector3::new(x, y, z));
                     }
                 }
             }
+        }
+
+        let mut multi_mesh = self.multi_mesh_instance.get_multimesh().unwrap();
+        multi_mesh.set_instance_count(self.data.len() as i32);
+
+        for (i, pos) in self.data.iter().copied().enumerate() {
+            multi_mesh.set_instance_transform(i as i32, Transform3D::new(Basis::default(), pos));
         }
 
         input.set_mouse_mode(input::MouseMode::CAPTURED);

@@ -42,6 +42,7 @@ impl ICharacterBody3D for Player {
 
     fn physics_process(&mut self, delta: f64) {
         let input = Input::singleton();
+        let mut final_speed = self.speed;
 
         if input.is_action_just_pressed("flying") {
             self.flying = !self.flying;
@@ -55,8 +56,12 @@ impl ICharacterBody3D for Player {
                 velocity += self.base().get_gravity() * delta as f32;
             }
         }
-        if input.is_action_pressed("jump") && self.base().is_on_floor() {
+        if input.is_action_pressed("jump") && (self.flying || self.base().is_on_floor()) {
             velocity.y = self.jump_velocity;
+        }
+
+        if input.is_action_pressed("sprint") {
+            final_speed *= 4.0;
         }
 
         let input_dir = input.get_vector("move_left", "move_right", "move_up", "move_down");
@@ -68,14 +73,14 @@ impl ICharacterBody3D for Player {
             direction = direction.normalized();
 
             if self.flying {
-                velocity = direction * self.speed;
+                velocity = direction * final_speed;
             } else {
-                velocity.x = direction.x * self.speed;
-                velocity.z = direction.z * self.speed;
+                velocity.x = direction.x * final_speed;
+                velocity.z = direction.z * final_speed;
             }
         } else {
-            velocity.x = move_toward(velocity.x as f64, 0. as f64, self.speed as f64) as f32;
-            velocity.z = move_toward(velocity.z as f64, 0. as f64, self.speed as f64) as f32;
+            velocity.x = move_toward(velocity.x as f64, 0. as f64, final_speed as f64) as f32;
+            velocity.z = move_toward(velocity.z as f64, 0. as f64, final_speed as f64) as f32;
         }
 
         self.base_mut().set_velocity(velocity);

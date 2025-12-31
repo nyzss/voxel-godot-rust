@@ -4,6 +4,8 @@ A Godot voxel terrain generator written in Rust using [godot-rust (gdext)](https
 
 This project follows and translates the [voxel terrain tutorial series](https://www.youtube.com/watch?v=wuusq4tc9iI&list=PLMQtM2GgbPEW8ElbOfc49QWV0eOquQiic&index=3) from GDScript to Rust.
 
+![first version](misc/first_version.png)
+
 ## Getting Started
 
 ### Prerequisites
