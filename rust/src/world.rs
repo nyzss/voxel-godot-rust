@@ -1,5 +1,7 @@
 use godot::{
-    classes::{CsgBox3D, FastNoiseLite, Input, InputEvent, InputEventMouseButton, input},
+    classes::{
+        CsgBox3D, FastNoiseLite, Input, InputEvent, InputEventMouseButton, Performance, input,
+    },
     global::MouseButton,
     prelude::*,
 };
@@ -14,6 +16,16 @@ struct World {
     #[export]
     world_size: Vector3,
     default_cube: OnReady<Gd<CsgBox3D>>,
+
+    total_cubes: u32,
+}
+
+#[godot_api]
+impl World {
+    #[func]
+    fn get_total_cubes(&self) -> u32 {
+        self.total_cubes
+    }
 }
 
 #[godot_api]
@@ -25,15 +37,21 @@ impl INode3D for World {
             cut_off: 0.5,
             world_size: Vector3::new(16., 16., 16.),
             default_cube: OnReady::from_node("DefaultCube"),
+
+            total_cubes: 0,
         }
     }
 
     fn ready(&mut self) {
+        let mut performance = Performance::singleton();
         let mut input = Input::singleton();
 
-        input.set_mouse_mode(input::MouseMode::CAPTURED);
-
         let rng = FastNoiseLite::new_gd();
+
+        performance.add_custom_monitor(
+            "game/cubes",
+            &Callable::from_object_method(&self.base(), "get_total_cubes"),
+        );
 
         for x in 0..self.world_size.x as usize {
             for y in 0..self.world_size.y as usize {
@@ -53,10 +71,13 @@ impl INode3D for World {
                         dup_cube.set_position(position);
 
                         self.base_mut().add_child(&dup_cube);
+                        self.total_cubes += 1;
                     }
                 }
             }
         }
+
+        input.set_mouse_mode(input::MouseMode::CAPTURED);
 
         self.default_cube.queue_free();
     }
