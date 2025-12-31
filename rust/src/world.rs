@@ -19,6 +19,9 @@ struct World {
     default_cube: OnReady<Gd<CsgBox3D>>,
     multi_mesh_instance: OnReady<Gd<MultiMeshInstance3D>>,
 
+    #[export]
+    colors: Array<Color>,
+
     data: Vec<Vector3>,
 }
 
@@ -40,6 +43,8 @@ impl INode3D for World {
             world_size: Vector3::new(16., 16., 16.),
             default_cube: OnReady::from_node("DefaultCube"),
             multi_mesh_instance: OnReady::from_node("MultiMeshInstance3D"),
+
+            colors: Array::new(),
 
             data: Vec::new(),
         }
@@ -69,11 +74,17 @@ impl INode3D for World {
             }
         }
 
-        let mut multi_mesh = self.multi_mesh_instance.get_multimesh().unwrap();
-        multi_mesh.set_instance_count(self.data.len() as i32);
+        let mut multimesh = self.multi_mesh_instance.get_multimesh().unwrap();
+        multimesh.set_instance_count(self.data.len() as i32);
 
         for (i, pos) in self.data.iter().copied().enumerate() {
-            multi_mesh.set_instance_transform(i as i32, Transform3D::new(Basis::default(), pos));
+            multimesh.set_instance_transform(i as i32, Transform3D::new(Basis::default(), pos));
+            multimesh.set_instance_color(
+                i as i32,
+                self.colors
+                    .get(fastrand::usize(0..self.colors.len()))
+                    .unwrap(),
+            );
         }
 
         input.set_mouse_mode(input::MouseMode::CAPTURED);

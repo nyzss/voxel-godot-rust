@@ -1,6 +1,7 @@
 use godot::{
     classes::{
         Camera3D, CharacterBody3D, ICharacterBody3D, Input, InputEvent, InputEventMouseMotion,
+        input,
     },
     global::{deg_to_rad, move_toward},
     prelude::*,
@@ -88,7 +89,11 @@ impl ICharacterBody3D for Player {
     }
 
     fn unhandled_input(&mut self, event: Gd<InputEvent>) {
-        if let Ok(event) = event.try_cast::<InputEventMouseMotion>() {
+        let input = Input::singleton();
+
+        if let Ok(event) = event.try_cast::<InputEventMouseMotion>()
+            && input.get_mouse_mode() == input::MouseMode::CAPTURED
+        {
             let relative = event.get_relative() * self.mouse_sensitivity;
 
             self.head.rotate_y(-relative.x);
