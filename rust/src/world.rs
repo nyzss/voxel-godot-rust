@@ -1,5 +1,6 @@
 use godot::{
-    classes::{CsgBox3D, FastNoiseLite},
+    classes::{CsgBox3D, FastNoiseLite, Input, InputEvent, InputEventMouseButton, input},
+    global::MouseButton,
     prelude::*,
 };
 
@@ -28,6 +29,10 @@ impl INode3D for World {
     }
 
     fn ready(&mut self) {
+        let mut input = Input::singleton();
+
+        input.set_mouse_mode(input::MouseMode::CAPTURED);
+
         let rng = FastNoiseLite::new_gd();
 
         for x in 0..self.world_size.x as usize {
@@ -54,5 +59,23 @@ impl INode3D for World {
         }
 
         self.default_cube.queue_free();
+    }
+
+    fn unhandled_input(&mut self, event: Gd<InputEvent>) {
+        let mut input = Input::singleton();
+
+        let mouse_mode = input.get_mouse_mode();
+        if event.is_action_pressed("ui_cancel") {
+            // Could simply quit but decided to change the mouse mode
+            // self.base_mut().get_tree().unwrap().quit();
+            input.set_mouse_mode(input::MouseMode::VISIBLE);
+        }
+        if mouse_mode == input::MouseMode::VISIBLE
+            && let Ok(event) = event.try_cast::<InputEventMouseButton>()
+            && event.get_button_index() == MouseButton::LEFT
+            && event.is_pressed()
+        {
+            input.set_mouse_mode(input::MouseMode::CAPTURED);
+        }
     }
 }

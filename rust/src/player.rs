@@ -1,6 +1,8 @@
 use godot::{
-    classes::{CharacterBody3D, ICharacterBody3D, Input},
-    global::move_toward,
+    classes::{
+        Camera3D, CharacterBody3D, ICharacterBody3D, Input, InputEvent, InputEventMouseMotion,
+    },
+    global::{deg_to_rad, move_toward},
     prelude::*,
 };
 
@@ -13,6 +15,12 @@ struct Player {
     speed: f32,
     #[export]
     jump_velocity: f32,
+
+    eye_camera: OnReady<Gd<Camera3D>>,
+    head: OnReady<Gd<Node3D>>,
+
+    #[export]
+    mouse_sensitivity: f32, // radians per pixel
 }
 
 #[godot_api]
@@ -22,6 +30,11 @@ impl ICharacterBody3D for Player {
             base,
             speed: 5.0,
             jump_velocity: 4.5,
+
+            head: OnReady::from_node("Head"),
+            eye_camera: OnReady::from_node("Head/EyeCamera"),
+
+            mouse_sensitivity: 0.001,
         }
     }
 
@@ -51,5 +64,21 @@ impl ICharacterBody3D for Player {
 
         self.base_mut().set_velocity(velocity);
         self.base_mut().move_and_slide();
+    }
+
+    fn unhandled_input(&mut self, event: Gd<InputEvent>) {
+        if let Ok(event) = event.try_cast::<InputEventMouseMotion>() {
+            let relative = event.get_relative() * self.mouse_sensitivity;
+
+            self.head.rotate_y(-relative.x);
+            self.eye_camera.rotate_x(-relative.y);
+
+            let rotation = self.eye_camera.get_rotation().clamp(
+                Vector3::new(deg_to_rad(-90.) as f32, 0., 0.),
+                Vector3::new(deg_to_rad(90.) as f32, 0., 0.),
+            );
+
+            self.eye_camera.set_rotation(rotation);
+        }
     }
 }

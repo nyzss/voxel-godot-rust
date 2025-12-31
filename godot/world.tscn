@@ -16,9 +16,15 @@ material = SubResource("StandardMaterial3D_gv5m4")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-0.5821228, 0.4487804, -0.6780332, 0, 0.8338857, 0.5519369, 0.81310076, 0.3212951, -0.48542395, -11.62, 39.11, -8.69)
+visible = false
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.6840635, -0.6034757, -0.40972438, 0.070844874, 0.5040875, -0.860742, 0.7259738, -0.6178291, -0.30207476, 0, 0, 0)
 
 [node name="Player" parent="." instance=ExtResource("1_f3sb7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 40, 16)
+
+[node name="Ground" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004869461, 4.7683716e-07, 0.0099077225)
+use_collision = true
+size = Vector3(100, 1, 100)
