@@ -1,9 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://bk5onkrn7xg1r"]
+[gd_scene load_steps=5 format=3 uid="uid://bk5onkrn7xg1r"]
 
 [ext_resource type="PackedScene" uid="uid://oj0oouh4mwtt" path="res://player.tscn" id="1_f3sb7"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gv5m4"]
-albedo_color = Color(0.8522317, 0.30534402, 0.7130521, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f3sb7"]
 vertex_color_use_as_albedo = true
@@ -21,14 +18,6 @@ cut_off = 0.30000000000000004
 world_size = Vector3(64, 64, 64)
 colors = Array[Color]([Color(0.9394746, 0, 0.5229412, 1), Color(0.7665274, 0.34422696, 0.2646354, 1), Color(0.6603956, 0.66039556, 0.66039556, 1), Color(0.22360197, 0.6280279, 0.7946216, 1)])
 metadata/_edit_group_ = true
-
-[node name="DefaultCube" type="CSGBox3D" parent="."]
-use_collision = true
-material = SubResource("StandardMaterial3D_gv5m4")
-
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(-0.5821228, 0.4487804, -0.6780332, 0, 0.8338857, 0.5519369, 0.81310076, 0.3212951, -0.48542395, -11.62, 39.11, -8.69)
-visible = false
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.6840635, -0.6034757, -0.40972438, 0.070844874, 0.5040875, -0.860742, 0.7259738, -0.6178291, -0.30207476, 0, 0, 0)

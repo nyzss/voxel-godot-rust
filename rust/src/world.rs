@@ -1,6 +1,6 @@
 use godot::{
     classes::{
-        CollisionShape3D, CsgBox3D, FastNoiseLite, Input, InputEvent, InputEventMouseButton,
+        CollisionShape3D, FastNoiseLite, Input, InputEvent, InputEventMouseButton,
         MultiMeshInstance3D, Performance, StaticBody3D, input,
     },
     global::MouseButton,
@@ -16,7 +16,6 @@ struct World {
     cut_off: f32,
     #[export]
     world_size: Vector3,
-    default_cube: OnReady<Gd<CsgBox3D>>,
     multi_mesh_instance: OnReady<Gd<MultiMeshInstance3D>>,
 
     #[export]
@@ -41,7 +40,6 @@ impl INode3D for World {
 
             cut_off: 0.5,
             world_size: Vector3::new(16., 16., 16.),
-            default_cube: OnReady::from_node("DefaultCube"),
             multi_mesh_instance: OnReady::from_node("MultiMeshInstance3D"),
 
             colors: Array::new(),
@@ -105,8 +103,6 @@ impl INode3D for World {
         }
 
         input.set_mouse_mode(input::MouseMode::CAPTURED);
-
-        self.default_cube.queue_free();
     }
 
     fn unhandled_input(&mut self, event: Gd<InputEvent>) {
