@@ -1,7 +1,7 @@
 use godot::{
     classes::{
-        CsgBox3D, FastNoiseLite, Input, InputEvent, InputEventMouseButton, MultiMeshInstance3D,
-        Performance, input,
+        CollisionShape3D, CsgBox3D, FastNoiseLite, Input, InputEvent, InputEventMouseButton,
+        MultiMeshInstance3D, Performance, StaticBody3D, input,
     },
     global::MouseButton,
     prelude::*,
@@ -77,7 +77,8 @@ impl INode3D for World {
         let mut multimesh = self.multi_mesh_instance.get_multimesh().unwrap();
         multimesh.set_instance_count(self.data.len() as i32);
 
-        for (i, pos) in self.data.iter().copied().enumerate() {
+        let positions: Vec<Vector3> = self.data.iter().copied().collect();
+        for (i, pos) in positions.into_iter().enumerate() {
             multimesh.set_instance_transform(i as i32, Transform3D::new(Basis::default(), pos));
             multimesh.set_instance_color(
                 i as i32,
@@ -85,6 +86,22 @@ impl INode3D for World {
                     .get(fastrand::usize(0..self.colors.len()))
                     .unwrap(),
             );
+
+            let mut collision_node = StaticBody3D::new_alloc();
+            let mut collision_shape = CollisionShape3D::new_alloc();
+
+            collision_shape.set_shape(
+                &multimesh
+                    .get_mesh()
+                    .unwrap()
+                    .create_trimesh_shape()
+                    .unwrap(),
+            );
+
+            collision_node.add_child(&collision_shape);
+            collision_node.set_position(pos);
+
+            self.base_mut().add_child(&collision_node);
         }
 
         input.set_mouse_mode(input::MouseMode::CAPTURED);

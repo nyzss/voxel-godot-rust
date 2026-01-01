@@ -18,7 +18,7 @@ mesh = SubResource("BoxMesh_fj7yv")
 
 [node name="World" type="World"]
 cut_off = 0.30000000000000004
-world_size = Vector3(240, 120, 240)
+world_size = Vector3(64, 64, 64)
 colors = Array[Color]([Color(0.9394746, 0, 0.5229412, 1), Color(0.7665274, 0.34422696, 0.2646354, 1), Color(0.6603956, 0.66039556, 0.66039556, 1), Color(0.22360197, 0.6280279, 0.7946216, 1)])
 metadata/_edit_group_ = true
 
