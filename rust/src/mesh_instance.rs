@@ -7,6 +7,8 @@ use godot::{
     prelude::*,
 };
 
+use crate::utils::build_vector;
+
 #[derive(Debug, GodotConvert, Var, Export)]
 #[godot(via = GString)]
 enum Face {
@@ -48,11 +50,8 @@ impl MeshInstance {
             if !data[i] {
                 continue;
             }
-            let x = i % chunk_size;
-            let y = (i / chunk_size) % chunk_size;
-            let z = ((i / chunk_size) / max_ceilling) % max_ceilling;
 
-            let pos = Vector3::new(x as f32, y as f32, z as f32);
+            let pos = build_vector(i, chunk_size, max_ceilling);
 
             self.add_face(Face::BOTTOM, pos);
             self.add_face(Face::FRONT, pos);

@@ -1,5 +1,6 @@
 mod mesh_instance;
 mod player;
+mod utils;
 mod world;
 
 use godot::prelude::*;

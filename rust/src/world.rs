@@ -6,7 +6,7 @@ use godot::{
     prelude::*,
 };
 
-use crate::mesh_instance::MeshInstance;
+use crate::{mesh_instance::MeshInstance, utils::build_index};
 
 #[derive(GodotClass)]
 #[class(base=Node3D)]
@@ -47,7 +47,7 @@ impl World {
         for x in 0..chunk_size {
             for z in 0..chunk_size {
                 for y in 0..self.max_ceilling as usize {
-                    let index = x + y * chunk_size + z * chunk_size * self.max_ceilling as usize;
+                    let index = build_index(x, y, z, chunk_size, self.max_ceilling as usize);
 
                     let rand = rng.get_noise_3d(x as f32, y as f32, z as f32);
 
