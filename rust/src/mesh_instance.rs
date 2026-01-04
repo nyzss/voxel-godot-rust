@@ -1,6 +1,6 @@
 use godot::{
     classes::{
-        ArrayMesh, IMeshInstance3D, MeshInstance3D,
+        ArrayMesh, IMeshInstance3D, Material, MeshInstance3D,
         mesh::{self, ArrayType},
     },
     obj::IndexEnum,
@@ -20,9 +20,11 @@ enum Face {
 
 #[derive(GodotClass)]
 #[class(base=MeshInstance3D)]
-struct MeshInstance {
+pub struct MeshInstance {
     base: Base<MeshInstance3D>,
 
+    #[export]
+    mat: OnEditor<Gd<Material>>,
     mesh: OnReady<Gd<ArrayMesh>>,
     surface_array: VarArray,
 
@@ -39,13 +41,15 @@ struct MeshInstance {
 #[godot_api]
 impl MeshInstance {
     #[func]
-    fn generate_mesh(&mut self) {
-        self.add_face(Face::BOTTOM, Vector3::ZERO);
-        self.add_face(Face::FRONT, Vector3::ZERO);
-        self.add_face(Face::RIGHT, Vector3::ZERO);
-        self.add_face(Face::TOP, Vector3::ZERO);
-        self.add_face(Face::LEFT, Vector3::ZERO);
-        self.add_face(Face::BACK, Vector3::ZERO);
+    pub fn generate_mesh(&mut self, data: Vec<Vector3>) {
+        for pos in data {
+            self.add_face(Face::BOTTOM, pos);
+            self.add_face(Face::FRONT, pos);
+            self.add_face(Face::RIGHT, pos);
+            self.add_face(Face::TOP, pos);
+            self.add_face(Face::LEFT, pos);
+            self.add_face(Face::BACK, pos);
+        }
 
         self.commit_mesh();
     }
@@ -63,6 +67,8 @@ impl MeshInstance {
 
         self.mesh
             .add_surface_from_arrays(mesh::PrimitiveType::TRIANGLES, &self.surface_array);
+
+        self.mesh.surface_set_material(0, &*self.mat);
     }
 
     #[func]
@@ -90,6 +96,8 @@ impl IMeshInstance3D for MeshInstance {
     fn init(base: Base<MeshInstance3D>) -> Self {
         Self {
             base,
+
+            mat: OnEditor::default(),
 
             mesh: OnReady::manual(),
             surface_array: VarArray::new(),
@@ -150,7 +158,5 @@ impl IMeshInstance3D for MeshInstance {
 
         self.surface_array
             .resize(ArrayType::MAX.to_index(), &Variant::default());
-
-        self.generate_mesh();
     }
 }

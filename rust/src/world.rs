@@ -7,6 +7,8 @@ use godot::{
     prelude::*,
 };
 
+use crate::mesh_instance::MeshInstance;
+
 #[derive(GodotClass)]
 #[class(base=Node3D)]
 struct World {
@@ -18,9 +20,10 @@ struct World {
     world_size: Vector3,
     multi_mesh_instance: OnReady<Gd<MultiMeshInstance3D>>,
 
+    mesh_instance: OnReady<Gd<MeshInstance>>,
+
     #[export]
     colors: Array<Color>,
-
     data: Vec<Vector3>,
 }
 
@@ -31,8 +34,7 @@ impl World {
         self.data.len() as u32
     }
 
-    #[func]
-    fn generate_world(&mut self) {
+    fn generate_world_data(&mut self) {
         let rng = FastNoiseLite::new_gd();
 
         for x in 0..self.world_size.x as usize {
@@ -47,11 +49,13 @@ impl World {
                 }
             }
         }
+    }
 
+    fn _generate_world_mesh(&mut self) {
         let mut multimesh = self.multi_mesh_instance.get_multimesh().unwrap();
         multimesh.set_instance_count(self.data.len() as i32);
 
-        let positions: Vec<Vector3> = self.data.iter().copied().collect();
+        let positions: Vec<Vector3> = std::mem::take(&mut self.data);
         for (i, pos) in positions.into_iter().enumerate() {
             multimesh.set_instance_transform(i as i32, Transform3D::new(Basis::default(), pos));
             multimesh.set_instance_color(
@@ -90,8 +94,9 @@ impl INode3D for World {
             world_size: Vector3::new(16., 16., 16.),
             multi_mesh_instance: OnReady::from_node("MultiMeshInstance3D"),
 
-            colors: Array::new(),
+            mesh_instance: OnReady::from_node("MeshInstance3D"),
 
+            colors: Array::new(),
             data: Vec::new(),
         }
     }
@@ -105,7 +110,10 @@ impl INode3D for World {
             &Callable::from_object_method(&self.base(), "get_total_cubes"),
         );
 
-        // self.generate_world();
+        self.generate_world_data();
+
+        let data = std::mem::take(&mut self.data);
+        self.mesh_instance.bind_mut().generate_mesh(data);
 
         input.set_mouse_mode(input::MouseMode::CAPTURED);
     }
