@@ -41,8 +41,19 @@ pub struct MeshInstance {
 #[godot_api]
 impl MeshInstance {
     #[func]
-    pub fn generate_mesh(&mut self, data: Vec<Vector3>) {
-        for pos in data {
+    pub fn generate_mesh(&mut self, data: Vec<bool>, chunk_size: u32, max_ceilling: u32) {
+        let (chunk_size, max_ceilling) = (chunk_size as usize, max_ceilling as usize);
+
+        for i in 0..data.len() {
+            if !data[i] {
+                continue;
+            }
+            let x = i % chunk_size;
+            let y = (i / chunk_size) % chunk_size;
+            let z = ((i / chunk_size) / max_ceilling) % max_ceilling;
+
+            let pos = Vector3::new(x as f32, y as f32, z as f32);
+
             self.add_face(Face::BOTTOM, pos);
             self.add_face(Face::FRONT, pos);
             self.add_face(Face::RIGHT, pos);

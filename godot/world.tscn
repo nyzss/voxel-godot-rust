@@ -19,8 +19,9 @@ vertex_color_use_as_albedo = true
 [sub_resource type="ArrayMesh" id="ArrayMesh_f3sb7"]
 
 [node name="World" type="World"]
-cut_off = 0.30000000000000004
-world_size = Vector3(64, 64, 64)
+cut_off = 0.19999999999999996
+chunk_size = 64
+world_seed = 5526
 colors = Array[Color]([Color(0.9394746, 0, 0.5229412, 1), Color(0.7665274, 0.34422696, 0.2646354, 1), Color(0.6603956, 0.66039556, 0.66039556, 1), Color(0.22360197, 0.6280279, 0.7946216, 1)])
 metadata/_edit_group_ = true
 
@@ -28,7 +29,7 @@ metadata/_edit_group_ = true
 transform = Transform3D(-0.6840635, -0.6034757, -0.40972438, 0.070844874, 0.5040875, -0.860742, 0.7259738, -0.6178291, -0.30207476, 0, 0, 0)
 
 [node name="Player" parent="." instance=ExtResource("1_f3sb7")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 40, 16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 70, 16)
 
 [node name="Ground" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004869461, 4.7683716e-07, 0.0099077225)
