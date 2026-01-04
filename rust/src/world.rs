@@ -30,34 +30,10 @@ impl World {
     fn get_total_cubes(&self) -> u32 {
         self.data.len() as u32
     }
-}
 
-#[godot_api]
-impl INode3D for World {
-    fn init(base: Base<Node3D>) -> Self {
-        Self {
-            base,
-
-            cut_off: 0.5,
-            world_size: Vector3::new(16., 16., 16.),
-            multi_mesh_instance: OnReady::from_node("MultiMeshInstance3D"),
-
-            colors: Array::new(),
-
-            data: Vec::new(),
-        }
-    }
-
-    fn ready(&mut self) {
-        let mut performance = Performance::singleton();
-        let mut input = Input::singleton();
-
+    #[func]
+    fn generate_world(&mut self) {
         let rng = FastNoiseLite::new_gd();
-
-        performance.add_custom_monitor(
-            "game/cubes",
-            &Callable::from_object_method(&self.base(), "get_total_cubes"),
-        );
 
         for x in 0..self.world_size.x as usize {
             for y in 0..self.world_size.y as usize {
@@ -101,6 +77,35 @@ impl INode3D for World {
 
             self.base_mut().add_child(&collision_node);
         }
+    }
+}
+
+#[godot_api]
+impl INode3D for World {
+    fn init(base: Base<Node3D>) -> Self {
+        Self {
+            base,
+
+            cut_off: 0.5,
+            world_size: Vector3::new(16., 16., 16.),
+            multi_mesh_instance: OnReady::from_node("MultiMeshInstance3D"),
+
+            colors: Array::new(),
+
+            data: Vec::new(),
+        }
+    }
+
+    fn ready(&mut self) {
+        let mut performance = Performance::singleton();
+        let mut input = Input::singleton();
+
+        performance.add_custom_monitor(
+            "game/cubes",
+            &Callable::from_object_method(&self.base(), "get_total_cubes"),
+        );
+
+        self.generate_world();
 
         input.set_mouse_mode(input::MouseMode::CAPTURED);
     }

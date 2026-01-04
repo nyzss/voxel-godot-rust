@@ -67,12 +67,11 @@ impl ICharacterBody3D for Player {
 
         let input_dir = input.get_vector("move_left", "move_right", "move_up", "move_down");
 
-        let mut direction = self.eye_camera.get_global_transform().basis
-            * Vector3::new(input_dir.x, 0., input_dir.y);
+        let direction = (self.eye_camera.get_global_transform().basis
+            * Vector3::new(input_dir.x, 0., input_dir.y))
+        .try_normalized();
 
-        if direction.length() > 0.0 {
-            direction = direction.normalized();
-
+        if let Some(direction) = direction {
             if self.flying {
                 velocity = direction * final_speed;
             } else {
@@ -80,8 +79,8 @@ impl ICharacterBody3D for Player {
                 velocity.z = direction.z * final_speed;
             }
         } else {
-            velocity.x = move_toward(velocity.x as f64, 0. as f64, final_speed as f64) as f32;
-            velocity.z = move_toward(velocity.z as f64, 0. as f64, final_speed as f64) as f32;
+            velocity.x = move_toward(velocity.x as f64, 0.0, final_speed as f64) as f32;
+            velocity.z = move_toward(velocity.z as f64, 0.0, final_speed as f64) as f32;
         }
 
         self.base_mut().set_velocity(velocity);
