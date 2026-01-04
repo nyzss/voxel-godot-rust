@@ -1,3 +1,4 @@
+mod mesh_instance;
 mod player;
 mod world;
 

@@ -105,7 +105,7 @@ impl INode3D for World {
             &Callable::from_object_method(&self.base(), "get_total_cubes"),
         );
 
-        self.generate_world();
+        // self.generate_world();
 
         input.set_mouse_mode(input::MouseMode::CAPTURED);
     }
