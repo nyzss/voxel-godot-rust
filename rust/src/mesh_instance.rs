@@ -7,7 +7,7 @@ use godot::{
     prelude::*,
 };
 
-use crate::utils::build_vector;
+use crate::utils::{build_index, build_vector};
 
 #[derive(Debug, GodotConvert, Var, Export)]
 #[godot(via = GString)]
@@ -50,15 +50,55 @@ impl MeshInstance {
             if !data[i] {
                 continue;
             }
-
             let pos = build_vector(i, chunk_size, max_ceilling);
 
-            self.add_face(Face::BOTTOM, pos);
-            self.add_face(Face::FRONT, pos);
-            self.add_face(Face::RIGHT, pos);
-            self.add_face(Face::TOP, pos);
-            self.add_face(Face::LEFT, pos);
-            self.add_face(Face::BACK, pos);
+            let (x, y, z) = (pos.x as usize, pos.y as usize, pos.z as usize);
+            let top = data
+                .get(build_index(x, y + 1, z, chunk_size, max_ceilling))
+                .copied()
+                .unwrap_or(false);
+            let bottom = y != 0
+                && data
+                    .get(build_index(x, y - 1, z, chunk_size, max_ceilling))
+                    .copied()
+                    .unwrap_or(false);
+            let left = x != 0
+                && data
+                    .get(build_index(x - 1, y, z, chunk_size, max_ceilling))
+                    .copied()
+                    .unwrap_or(false);
+            let right = data
+                .get(build_index(x + 1, y, z, chunk_size, max_ceilling))
+                .copied()
+                .unwrap_or(false);
+            let front = data
+                .get(build_index(x, y, z + 1, chunk_size, max_ceilling))
+                .copied()
+                .unwrap_or(false);
+            let back = z != 0
+                && data
+                    .get(build_index(x, y, z - 1, chunk_size, max_ceilling))
+                    .copied()
+                    .unwrap_or(false);
+
+            if !top {
+                self.add_face(Face::TOP, pos);
+            }
+            if !bottom {
+                self.add_face(Face::BOTTOM, pos);
+            }
+            if !left {
+                self.add_face(Face::LEFT, pos);
+            }
+            if !right {
+                self.add_face(Face::RIGHT, pos);
+            }
+            if !front {
+                self.add_face(Face::FRONT, pos);
+            }
+            if !back {
+                self.add_face(Face::BACK, pos);
+            }
         }
 
         self.commit_mesh();
